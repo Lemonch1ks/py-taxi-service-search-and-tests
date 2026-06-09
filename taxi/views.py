@@ -53,9 +53,10 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         manufacturer_name = self.request.GET.get("manufacturer_name")
         if manufacturer_name:
-            return Manufacturer.objects.filter(name__icontains=manufacturer_name)
+            return Manufacturer.objects.filter(
+                name__icontains=manufacturer_name
+            )
         return Manufacturer.objects.all()
-
 
 
 class ManufacturerCreateView(LoginRequiredMixin, generic.CreateView):
@@ -83,7 +84,9 @@ class CarListView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(CarListView, self).get_context_data(**kwargs)
         car_model = self.request.GET.get("car_model")
-        context["search_form"] = CarSearchForm(initial={"car_model": car_model})
+        context["search_form"] = CarSearchForm(
+            initial={"car_model": car_model}
+        )
         return context
 
     def get_queryset(self):
@@ -117,6 +120,7 @@ class CarDeleteView(LoginRequiredMixin, generic.DeleteView):
 class DriverListView(LoginRequiredMixin, generic.ListView):
     model = Driver
     paginate_by = 5
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(DriverListView, self).get_context_data(**kwargs)
         username = self.request.GET.get("username")
@@ -130,7 +134,6 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
         if username:
             return Driver.objects.filter(username__icontains=username)
         return Driver.objects.all()
-
 
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):

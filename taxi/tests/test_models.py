@@ -18,7 +18,10 @@ class TestStrFuncOfModels(TestCase):
             last_name="Test last name",
             username="Test username",
         )
-        self.assertEqual(str(new_driver), "Test username (Test name Test last name)")
+        self.assertEqual(
+            str(new_driver),
+            "Test username (Test name Test last name)"
+        )
 
     def test_car_str(self):
         new_car = Car.objects.create(

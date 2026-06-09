@@ -58,7 +58,7 @@ class TestSearch(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "test_user")
         self.assertNotContains(response, "another_user")
-    
+
     def test_search_manufacturer_by_name(self):
         Manufacturer.objects.create(
             name="Test Manufacturer",
