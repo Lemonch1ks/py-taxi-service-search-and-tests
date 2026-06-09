@@ -52,10 +52,12 @@ class TestSearch(TestCase):
         self.assertContains(response, "test_user")
 
     def test_search_manufacturer_by_name(self):
-        new_manufacturer = Manufacturer.objects.create(
+        Manufacturer.objects.create(
             name="test_manufacturer",
         )
         response = self.client.get(
             reverse("taxi:manufacturer-list"),
             data={"manufacturer": "test_manufacturer"},
         )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "test_manufacturer")
