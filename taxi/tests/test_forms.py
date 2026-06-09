@@ -43,6 +43,7 @@ class TestSearch(TestCase):
         self.assertNotContains(response, "Honda Civic")
 
     def test_search_drivers_by_username(self):
+        
         response = self.client.get(
             reverse("taxi:driver-list"),
             data={"username": "test_user"},
