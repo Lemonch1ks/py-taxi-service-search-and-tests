@@ -4,10 +4,15 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from psutil import users
+
 
 from .models import Driver, Car, Manufacturer
-from .forms import DriverCreationForm, DriverLicenseUpdateForm, CarForm, DriverSearchForm
+from .forms import (DriverCreationForm,
+                    DriverLicenseUpdateForm,
+                    CarForm,
+                    DriverSearchForm,
+                    CarSearchForm,
+                    ManufacturerSearchForm)
 
 
 @login_required
@@ -37,6 +42,21 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
     template_name = "taxi/manufacturer_list.html"
     paginate_by = 5
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ManufacturerListView, self).get_context_data(**kwargs)
+        manufacturer_name = self.request.GET.get("manufacturer_name")
+        context["search_form"] = ManufacturerSearchForm(
+            initial={"manufacturer_name": manufacturer_name}
+        )
+        return context
+
+    def get_queryset(self):
+        manufacturer_name = self.request.GET.get("manufacturer_name")
+        if manufacturer_name:
+            return Manufacturer.objects.filter(name__icontains=manufacturer_name)
+        return Manufacturer.objects.all()
+
+
 
 class ManufacturerCreateView(LoginRequiredMixin, generic.CreateView):
     model = Manufacturer
@@ -59,6 +79,18 @@ class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
     paginate_by = 5
     queryset = Car.objects.select_related("manufacturer")
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(CarListView, self).get_context_data(**kwargs)
+        car_model = self.request.GET.get("car_model")
+        context["search_form"] = CarSearchForm(initial={"car_model": car_model})
+        return context
+
+    def get_queryset(self):
+        car_model = self.request.GET.get("car_model")
+        if car_model:
+            return Car.objects.filter(model__icontains=car_model)
+        return Car.objects.all()
 
 
 class CarDetailView(LoginRequiredMixin, generic.DetailView):
