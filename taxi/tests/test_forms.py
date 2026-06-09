@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.template.defaultfilters import cut
 from django.test import TestCase
 from django.urls import reverse
 
@@ -43,22 +44,36 @@ class TestSearch(TestCase):
         self.assertNotContains(response, "Honda Civic")
 
     def test_search_drivers_by_username(self):
-        
+        get_user_model().objects.create_user(
+            username="another_user",
+            password="password",
+            license_number="DEF12345",
+        )
+
         response = self.client.get(
             reverse("taxi:driver-list"),
-            data={"username": "test_user"},
+            {"username": "test_user"},
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "test_user")
-
+        self.assertNotContains(response, "another_user")
+    
     def test_search_manufacturer_by_name(self):
         Manufacturer.objects.create(
-            name="test_manufacturer",
+            name="Test Manufacturer",
+            country="Test country",
         )
+        Manufacturer.objects.create(
+            name="Another Manufacturer",
+            country="Another country",
+        )
+
         response = self.client.get(
             reverse("taxi:manufacturer-list"),
-            data={"manufacturer": "test_manufacturer"},
+            {"manufacturer_name": "Test"},
         )
+
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "test_manufacturer")
+        self.assertContains(response, "Test Manufacturer")
+        self.assertNotContains(response, "Another Manufacturer")
