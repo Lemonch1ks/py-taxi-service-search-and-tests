@@ -32,17 +32,18 @@ class TestSearch(TestCase):
 
 
 class TestLoginRequired(TestCase):
-    def setUp(self):
-        self.admin_user = get_user_model().objects.create_superuser(
-            username="admin",
-            password="admin123"
-        )
-        self.client.force_login(self.admin_user)
 
     def test_car_list_view(self):
         url = reverse("taxi:car-list")
         res = self.client.get(url)
-        self.assertEqual(res.status_code, 200)
+        self.assertNotEqual(res.status_code, 200)
 
+    def test_driver_list_view(self):
+        url = reverse("taxi:driver-list")
+        res = self.client.get(url)
+        self.assertNotEqual(res.status_code, 200)
 
-
+    def test_manufacturer_list_view(self):
+        url = reverse("taxi:manufacturer-list")
+        res = self.client.get(url)
+        self.assertNotEqual(res.status_code, 200)
